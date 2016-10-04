@@ -1,6 +1,11 @@
+import os
 import time
+from zipfile import ZipFile
+
 from selenium import webdriver
 import csv
+import mechanize
+import cookielib
 
 
 def get_credentials():
@@ -12,7 +17,7 @@ def get_credentials():
     return user_pass
 
 
-def start():
+def fetch_links():
     driver = webdriver.Chrome()
     driver.get('https://www.empatica.com/connect/login.php')
     driver.find_element_by_id("username").send_keys(get_credentials()[0])
@@ -37,6 +42,33 @@ def start():
         writer = csv.writer(f)
         writer.writerows(sessions_list)
     print 'Data successfully saved in sessions_list.csv file'
+    driver.close()
 
 
-start()
+# fetch_links()
+
+
+cj = cookielib.CookieJar()
+br = mechanize.Browser()
+br.set_cookiejar(cj)
+br.open("https://www.empatica.com/connect/login.php")
+
+br.select_form(nr=0)
+br.form['username'] = get_credentials()[0]
+br.form['password'] = get_credentials()[1]
+br.submit()
+
+f = open('Output/sessions_list.csv', 'rb')
+reader = csv.reader(f)
+for row in reader:
+    print row
+    br.retrieve(row[4], 'Output/Zipped/'+row[3]+'.zip')
+    os.makedirs('Output/Unzipped/'+row[3])
+    zip_ref = ZipFile('Output/Zipped/'+row[3]+'.zip', 'r')
+    zip_ref.extractall('Output/Unzipped/'+row[3])
+    zip_ref.close()
+    os.remove('Output/Zipped/'+row[3]+'.zip')
+f.close()
+
+
+
