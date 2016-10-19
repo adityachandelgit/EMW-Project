@@ -6,11 +6,12 @@ from selenium import webdriver
 import csv
 import mechanize
 import cookielib
+import MySQLdb
 
 
 def get_credentials():
     user_pass = []
-    with open('E:/1.SnD/Studies/ITLS-EMW/pass.txt', 'rb') as f:
+    with open('C:/Aditya-Main/GitHub/Empatica-Pass.txt', 'rb') as f:
         reader = csv.reader(f)
         for row in reader:
             user_pass.append(row[0])
@@ -48,27 +49,44 @@ def fetch_links():
 # fetch_links()
 
 
-cj = cookielib.CookieJar()
-br = mechanize.Browser()
-br.set_cookiejar(cj)
-br.open("https://www.empatica.com/connect/login.php")
+# cj = cookielib.CookieJar()
+# br = mechanize.Browser()
+# br.set_cookiejar(cj)
+# br.open("https://www.empatica.com/connect/login.php")
+#
+# br.select_form(nr=0)
+# br.form['username'] = get_credentials()[0]
+# br.form['password'] = get_credentials()[1]
+# br.submit()
+#
+# f = open('Output/sessions_list.csv', 'rb')
+# reader = csv.reader(f)
+# for row in reader:
+#     print row
+#     br.retrieve(row[4], 'Output/Zipped/'+row[3]+'.zip')
+#     os.makedirs('Output/Unzipped/'+row[3])
+#     zip_ref = ZipFile('Output/Zipped/'+row[3]+'.zip', 'r')
+#     zip_ref.extractall('Output/Unzipped/'+row[3])
+#     zip_ref.close()
+#     os.remove('Output/Zipped/'+row[3]+'.zip')
+# f.close()
 
-br.select_form(nr=0)
-br.form['username'] = get_credentials()[0]
-br.form['password'] = get_credentials()[1]
-br.submit()
-
-f = open('Output/sessions_list.csv', 'rb')
-reader = csv.reader(f)
-for row in reader:
-    print row
-    br.retrieve(row[4], 'Output/Zipped/'+row[3]+'.zip')
-    os.makedirs('Output/Unzipped/'+row[3])
-    zip_ref = ZipFile('Output/Zipped/'+row[3]+'.zip', 'r')
-    zip_ref.extractall('Output/Unzipped/'+row[3])
-    zip_ref.close()
-    os.remove('Output/Zipped/'+row[3]+'.zip')
-f.close()
 
 
+db = MySQLdb.connect(host="localhost",  # your host, usually localhost
+                     user="root",  # your username
+                     passwd="1234",  # your password
+                     db="e4",)  # name of the data base
 
+# you must create a Cursor object. It will let
+#  you execute all the queries you need
+cur = db.cursor()
+
+# Use all the SQL you like
+cur.execute("SELECT * FROM test")
+
+# print all the first cell of all the rows
+for row in cur.fetchall():
+    print row[0]
+
+db.close()
