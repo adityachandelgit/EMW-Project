@@ -76,7 +76,7 @@ f.close()
 
 
 # connect to the database
-# db = MySQLdb.connect(host="000", port=000, user="000", passwd="000", db="000")
+# db = MySQLdb.connect(host="000", port=000, user="000", passwd="0000", db="000")
 
 
 # f = open('Output/sessions_list.csv', 'rb')
