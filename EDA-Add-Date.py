@@ -4,9 +4,11 @@ import os
 from datetime import datetime, timedelta
 import itertools
 
+path = 'C:\My-Files\SnD\USU\EMW-Research\Empatica Data\CM Lantern\Lantern\By Date'
+
 
 def add_time():
-    for subdir, dirs, files in os.walk('C:\My-Files\SnD\USU\EMW-Research\Empatica Data\Cache Rocket\By Date'):
+    for subdir, dirs, files in os.walk(path):
         for f in files:
             if f == 'EDA.csv':
                 with open(os.path.join(subdir, f), 'rb') as infile, open(os.path.join(subdir, 'With-Time-' + f), "wb") as outfile:
@@ -25,7 +27,7 @@ def add_time():
 
 
 def six_sec_slots():
-    for subdir, dirs, files in os.walk('C:\My-Files\SnD\USU\EMW-Research\Empatica Data\Cache Rocket\By Date'):
+    for subdir, dirs, files in os.walk(path):
         for f in files:
             if f == 'With-Time-EDA.csv':
                 with open(os.path.join(subdir, f), 'rb') as infile, open(os.path.join(subdir, '5-Sec-Slots-' + f), "wb") as outfile:
@@ -43,7 +45,7 @@ def six_sec_slots():
 
 
 def fix_artifact_timestamp():
-    for subdir, dirs, files in os.walk('C:\My-Files\SnD\USU\EMW-Research\Empatica Data\Cache Rocket\By Date'):
+    for subdir, dirs, files in os.walk(path):
         for f in files:
             if f[-10:] == 'Binary.csv':
                 with open(os.path.join(subdir, f), 'rb') as infile, open(os.path.join(subdir, f[:len(f) - 4] + '-Fixed.csv'), "wb") as outfile:
@@ -61,11 +63,13 @@ def fix_artifact_timestamp():
 
 def combine_peak_artifact_csv():
     two = []
-    for subdir, dirs, files in os.walk('C:\My-Files\SnD\USU\EMW-Research\Empatica Data\Cache Rocket\By Date'):
+    for subdir, dirs, files in os.walk(path):
         for f in files:
             if f[-9:] == 'Fixed.csv' or f[:5] == '5-Sec':
                 two.append(os.path.join(subdir, f))
                 if len(two) == 2:
+                    print 'Current File 1: ' + two[0]
+                    print 'Current File 2: ' + two[1]
                     with open(two[0], 'rb') as infile1, open(two[1], 'rb') as infile2, open(os.path.join(subdir, 'Merged-EDA.csv'), "wb") as outfile:
                         reader1 = csv.reader(infile1)
                         reader2 = csv.reader(infile2)
@@ -77,7 +81,7 @@ def combine_peak_artifact_csv():
                         del two[:]
 
 
-combine_peak_artifact_csv()
-# fix_artifact_timestamp()
-# six_sec_slots()
 # add_time()
+six_sec_slots()
+fix_artifact_timestamp()
+combine_peak_artifact_csv()
