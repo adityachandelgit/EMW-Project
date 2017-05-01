@@ -1,9 +1,10 @@
 import os
 import csv
 import statistics as stats
+import matplotlib.pyplot as plt
+import numpy as np
 
-
-root = 'C:/My-Files/SnD/USU/EMW-Research/Empatica Data/Cache Rocket/By Device'
+root = 'D:\\1.Work\USU\EMW-Research\Empatica Data\CM Rocket\Cache Rocket (Backup)\By Date'
 
 
 def standard_deviation_each_device():
@@ -18,7 +19,37 @@ def standard_deviation_each_device():
                 writer.writerow(data)
 
 
-standard_deviation_each_device()
+def raw_data():
+    all_data = []
+    with open("raw.csv", "wb") as f:
+        writer = csv.writer(f)
+        writer.writerow(['Date', 'DeviceID', 'EDA'])
+        for subdir, dirs, files in os.walk('E:\\1.SnD\\Studies\\ITLS-EMW\\Rocket E4'):
+            for file in files:
+                if file == 'EDA.csv':
+                    eda = list(csv.reader(open(os.path.join(subdir, file), 'rb')))
+                    eda = eda[5:len(eda)]
+                    eda_float = [float(i[0]) for i in eda]
+                    subdir_split = subdir.split('\\')
+                    for e in eda:
+                        # writer.writerow([subdir_split[5], subdir_split[6][-6:], float(e[0])])
+                        all_data.append([subdir_split[-1][-6:], subdir_split[-2], float(e[0])])
+    devices = set([a[0] for a in all_data])
+    data_for_a_device = []
+    data_for_all_device = []
+    for device in devices:
+        del data_for_a_device[:]
+        for data in all_data:
+            if data[0] == device:
+                data_for_a_device.append(float(data[2]))
+        # plt.boxplot(data_for_a_device)
+        # plt.title(device + ' : Lantern')
+        # plt.savefig(device + '.png')
+        # plt.close()
+        data_for_all_device.append([a for a in data_for_a_device])
+    plt.boxplot(data_for_all_device)
+    plt.savefig('box.png')
+    plt.close()
 
 
 def all_stats():
@@ -46,4 +77,6 @@ def all_stats():
                     writer.writerow(current_stat)
 
 
+# standard_deviation_each_device()
 # all_stats()
+raw_data()

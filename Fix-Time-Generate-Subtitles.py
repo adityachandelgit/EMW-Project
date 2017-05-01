@@ -65,7 +65,7 @@ def generate_subtitle(st, dur, full_path):
     op.close()
 
 
-for subdir, dirs, files in os.walk("D:/EMW Video Processing/EMW/"):
+for subdir, dirs, files in os.walk("G:\EMW\CM Rocket\GoPro"):
     for f in files:
         if f[-4:] == '.MP4':
             file_path = os.path.join(subdir, f)

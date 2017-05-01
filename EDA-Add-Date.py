@@ -1,13 +1,17 @@
 import csv
-import time
-import os
-from datetime import datetime, timedelta
 import itertools
+import os
+import time
+from datetime import datetime, timedelta
 
-path = 'C:\My-Files\SnD\USU\EMW-Research\Empatica Data\CM Lantern\Lantern\By Date'
+path = 'D:\EMW-TPI\\Test'
 
 
 def add_time():
+    """Adds timestamp to EDA.csv file downloaded from Empatica.com
+       Input: Path to the root directory containing EDA.csv file
+       Output: A csv named 'With-Time-EDA.csv', containing the columns: Eda value and timestamp
+     """
     for subdir, dirs, files in os.walk(path):
         for f in files:
             if f == 'EDA.csv':
@@ -27,6 +31,11 @@ def add_time():
 
 
 def six_sec_slots():
+    """Original EDA.csv file created by empatica contains EDA entry 4 times per second. This function takes mean of 5 seconds of eda 
+       values (4x5) and stores them in a new csv file
+       Input: Path to the root directory containing With-Time-EDA.csv file
+       Output: A csv named '5-Sec-Slots-With-Time-EDA.csv', containing 5 second EDA values
+    """
     for subdir, dirs, files in os.walk(path):
         for f in files:
             if f == 'With-Time-EDA.csv':
@@ -45,6 +54,10 @@ def six_sec_slots():
 
 
 def fix_artifact_timestamp():
+    """Timestamp of EDA files created by empatica device is about 6 hours off. fix_artifact_timestamp() fixes this.
+        Input: Path to the root directory containing un-fixed EDA file
+        Output: A csv file named 'EDA-Fixed.csv'.
+    """
     for subdir, dirs, files in os.walk(path):
         for f in files:
             if f[-10:] == 'Binary.csv':
@@ -62,11 +75,16 @@ def fix_artifact_timestamp():
 
 
 def combine_peak_artifact_csv():
+    """ Combines 'Fixed timestamp' file and '5 seconds slot' file.
+        Input: Path to the root directory containing Fixed timestamp' file and '5 seconds slot' file.
+        Output: A csv file named 'Merged-EDA.csv'.
+    """
     two = []
     for subdir, dirs, files in os.walk(path):
         for f in files:
             if f[-9:] == 'Fixed.csv' or f[:5] == '5-Sec':
                 two.append(os.path.join(subdir, f))
+                two.sort()
                 if len(two) == 2:
                     print 'Current File 1: ' + two[0]
                     print 'Current File 2: ' + two[1]
@@ -81,7 +99,8 @@ def combine_peak_artifact_csv():
                         del two[:]
 
 
+
 # add_time()
-six_sec_slots()
-fix_artifact_timestamp()
-combine_peak_artifact_csv()
+# six_sec_slots()
+# fix_artifact_timestamp()
+# combine_peak_artifact_csv()
